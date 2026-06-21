@@ -1,0 +1,76 @@
+from kivy.app import App
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.button import Button
+from kivy.uix.textinput import TextInput
+
+class Calculator(App):
+    def build(self):
+        self.expression = ""
+
+        layout = GridLayout(
+            cols=1,
+            padding=10,
+            spacing=10
+        )
+
+        self.display = TextInput(
+            readonly=True,
+            font_size=50,
+            size_hint=(1, 0.2),
+            halign="right"
+        )
+
+        layout.add_widget(self.display)
+
+        buttons = [
+            ["C", "⌫", "%", "/"],
+            ["7", "8", "9", "*"],
+            ["4", "5", "6", "-"],
+            ["1", "2", "3", "+"],
+            ["0", ".", "="]
+        ]
+
+        for row in buttons:
+            row_layout = GridLayout(
+                cols=len(row),
+                size_hint=(1, None),
+                height=120,   # ⭐ اندازه ردیف‌ها
+                spacing=5
+            )
+
+            for b in row:
+                btn = Button(
+                    text=b,
+                    font_size=28,
+                    background_normal='',
+                    background_color=(0.15,0.15,0.15,1)
+                )
+                btn.bind(on_press=self.on_press)
+                row_layout.add_widget(btn)
+
+            layout.add_widget(row_layout)
+
+        return layout
+
+    def on_press(self, instance):
+        t = instance.text
+
+        if t == "C":
+            self.expression = ""
+
+        elif t == "⌫":
+            self.expression = self.expression[:-1]
+
+        elif t == "=":
+            try:
+                self.expression = str(eval(self.expression))
+            except:
+                self.expression = "خطا"
+
+        else:
+            self.expression += t
+
+        self.display.text = self.expression
+
+
+Calculator().run()
